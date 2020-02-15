@@ -14,7 +14,7 @@ RUN go get -v
 RUN CGO_ENABLED=0 go build -o /server
 
 # This stage runs the server
-FROM scratch
+FROM alpine:3.9.5
 
 # Copy the static binary that was created during the build stage
 COPY --from=build /server /
