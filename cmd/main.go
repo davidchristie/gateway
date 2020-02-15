@@ -9,6 +9,7 @@ import (
 
 	"github.com/99designs/gqlgen/handler"
 	"github.com/davidchristie/gateway/exec"
+	"github.com/davidchristie/gateway/middleware"
 	"github.com/davidchristie/gateway/resolvers"
 )
 
@@ -20,9 +21,11 @@ func main() {
 		port = defaultPort
 	}
 
-	http.Handle("/", handler.Playground("GraphQL playground", "/query"))
-	http.Handle("/query", handler.GraphQL(exec.NewExecutableSchema(exec.Config{Resolvers: resolvers.NewRootResolver()})))
+	mux := http.NewServeMux()
+
+	mux.Handle("/", handler.Playground("GraphQL playground", "/query"))
+	mux.Handle("/query", handler.GraphQL(exec.NewExecutableSchema(exec.Config{Resolvers: resolvers.NewRootResolver()})))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, middleware.Middleware(mux)))
 }
