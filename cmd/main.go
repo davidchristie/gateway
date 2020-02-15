@@ -24,7 +24,8 @@ func main() {
 
 	corsHandler := cors.New(cors.Options{
 		AllowCredentials: true,
-		AllowedHeaders:   []string{"Authorization"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"},
+		Debug:            true,
 	}).Handler
 
 	mux := http.NewServeMux()
