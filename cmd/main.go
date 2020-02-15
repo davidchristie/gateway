@@ -22,11 +22,15 @@ func main() {
 		port = defaultPort
 	}
 
+	corsHandler := cors.New(cors.Options{
+		AllowCredentials: true,
+	}).Handler
+
 	mux := http.NewServeMux()
 
 	mux.Handle("/", handler.Playground("GraphQL playground", "/query"))
 	mux.Handle("/query", handler.GraphQL(exec.NewExecutableSchema(exec.Config{Resolvers: resolvers.NewRootResolver()})))
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, cors.Default().Handler(middleware.Middleware(mux))))
+	log.Fatal(http.ListenAndServe(":"+port, corsHandler((middleware.Middleware(mux)))))
 }
